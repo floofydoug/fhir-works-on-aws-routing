@@ -64,14 +64,6 @@ export const setTenantIdMiddleware: (
         const tenantIdFromAudClaim = getTenantIdFromAudClaim(res.locals.userIdentity.aud, fhirConfig.server.url);
 
         console.log({ tenantIdFromAudClaim, tenantIdFromCustomClaim });
-
-        // TenantId should exist in at least one claim, if exist in both claims, they should be equal
-        if (
-            (tenantIdFromCustomClaim === undefined && tenantIdFromAudClaim === undefined) ||
-            (tenantIdFromCustomClaim && tenantIdFromAudClaim && tenantIdFromCustomClaim !== tenantIdFromAudClaim)
-        ) {
-            throw new UnauthorizedError('Unauthorized');
-        }
         const tenantId = tenantIdFromCustomClaim || tenantIdFromAudClaim;
         console.log('found dis tenant', tenantId);
         console.log('checking against', req.params.tenantIdFromPath);
@@ -87,7 +79,7 @@ export const setTenantIdMiddleware: (
         }
 
         // res.locals.tenantId = tenantId;
-        res.locals.tenantId = req.params.tenantIdFromPath;
+        res.locals.tenantId = res.locals.userIdentity.tenant;
         next();
     });
 };
