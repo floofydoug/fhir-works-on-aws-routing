@@ -4,12 +4,10 @@
  *
  */
 
-import { FhirConfig, UnauthorizedError } from 'fhir-works-on-aws-interface';
+import { FhirConfig } from 'fhir-works-on-aws-interface';
 import express from 'express';
 import { get, uniq } from 'lodash';
 import RouteHelper from '../routes/routeHelper';
-
-const tenantIdRegex = /^[a-zA-Z0-9\-_]{1,64}$/;
 
 const getTenantIdFromAudString = (audClaim: string, baseUrl: string): string | undefined => {
     if (audClaim.startsWith(`${baseUrl}/tenant/`)) {
@@ -62,22 +60,12 @@ export const setTenantIdMiddleware: (
         // Find tenantId from custom claim and aud claim
         const tenantIdFromCustomClaim = get(res.locals.userIdentity, fhirConfig.multiTenancyConfig?.tenantIdClaimPath!);
         const tenantIdFromAudClaim = getTenantIdFromAudClaim(res.locals.userIdentity.aud, fhirConfig.server.url);
-
         console.log({ tenantIdFromAudClaim, tenantIdFromCustomClaim });
         const tenantId = tenantIdFromCustomClaim || tenantIdFromAudClaim;
         console.log('found dis tenant', tenantId);
         console.log('checking against', req.params.tenantIdFromPath);
         console.log('reqURL', req.url);
         console.log('req.host', req.hostname);
-        console.log('da regex', tenantIdRegex);
-        if (
-            !tenantIdRegex.test(tenantId) ||
-            (req.params.tenantIdFromPath !== undefined && req.params.tenantIdFromPath !== tenantId)
-        ) {
-            console.log('eureka');
-            throw new UnauthorizedError('Unauthorized');
-        }
-
         // res.locals.tenantId = tenantId;
         res.locals.tenantId = res.locals.userIdentity.tenant;
         next();
