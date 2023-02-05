@@ -75,6 +75,8 @@ export const setTenantIdMiddleware: (
         const tenantId = tenantIdFromCustomClaim || tenantIdFromAudClaim;
         console.log('found dis tenant', tenantId);
         console.log('checking against', req.params.tenantIdFromPath);
+        console.log('reqURL', req.url);
+        console.log('req.host', req.hostname);
         console.log('da regex', tenantIdRegex);
         if (
             !tenantIdRegex.test(tenantId) ||
@@ -83,7 +85,9 @@ export const setTenantIdMiddleware: (
             console.log('eureka');
             throw new UnauthorizedError('Unauthorized');
         }
-        res.locals.tenantId = tenantId;
+
+        // res.locals.tenantId = tenantId;
+        res.locals.tenantId = req.params.tenantIdFromPath;
         next();
     });
 };

@@ -1,5 +1,5 @@
 import { SearchResult, BatchReadWriteResponse } from 'fhir-works-on-aws-interface';
-declare type LinkType = 'self' | 'previous' | 'next' | 'first' | 'last';
+type LinkType = 'self' | 'previous' | 'next' | 'first' | 'last';
 export default class BundleGenerator {
     static generateBundle(baseUrl: string, queryParams: any, searchResult: SearchResult, bundleType: 'searchset' | 'history', resourceType?: string, id?: string): {
         resourceType: string;

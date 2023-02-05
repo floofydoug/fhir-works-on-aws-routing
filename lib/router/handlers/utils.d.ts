@@ -1,1 +1,2 @@
-export declare const hash: (o: any) => string;
+export declare const hash: (o: any) => any;
+export declare const validateXHTMLResource: (resource: any) => boolean;

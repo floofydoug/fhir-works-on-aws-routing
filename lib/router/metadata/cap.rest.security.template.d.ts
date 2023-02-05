@@ -4,7 +4,7 @@ export default function makeSecurity(authConfig: Auth, hasCORSEnabled?: boolean)
     service: {
         coding: {
             system: string;
-            code: "Basic" | "OAuth" | "SMART-on-FHIR" | "NTLM" | "Kerberos" | "Certificates";
+            code: "Basic" | "NTLM" | "OAuth" | "SMART-on-FHIR" | "Kerberos" | "Certificates";
         }[];
     }[];
 } | {
