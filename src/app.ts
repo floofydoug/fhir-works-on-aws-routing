@@ -125,9 +125,9 @@ export function generateServerlessRouter(
         }
     });
 
-    if (fhirConfig.multiTenancyConfig?.enableMultiTenancy) {
-        mainRouter.use(setTenantIdMiddleware(fhirConfig));
-    }
+    // if (fhirConfig.multiTenancyConfig?.enableMultiTenancy) {
+    //     mainRouter.use(setTenantIdMiddleware(fhirConfig));
+    // }
 
     // Export
     if (fhirConfig.profile.bulkDataAccess) {

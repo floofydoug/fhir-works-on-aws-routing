@@ -56,9 +56,14 @@ export const setTenantIdMiddleware: (
     fhirConfig: FhirConfig,
 ) => (req: express.Request, res: express.Response, next: express.NextFunction) => void = (fhirConfig: FhirConfig) => {
     return RouteHelper.wrapAsync(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        console.log('locals', JSON.stringify(res.locals));
+        console.log('the path we check', fhirConfig.multiTenancyConfig?.tenantIdClaimPath!);
+        console.log('the fhir config url', fhirConfig.server.url);
         // Find tenantId from custom claim and aud claim
         const tenantIdFromCustomClaim = get(res.locals.userIdentity, fhirConfig.multiTenancyConfig?.tenantIdClaimPath!);
         const tenantIdFromAudClaim = getTenantIdFromAudClaim(res.locals.userIdentity.aud, fhirConfig.server.url);
+
+        console.log({ tenantIdFromAudClaim, tenantIdFromCustomClaim });
 
         // TenantId should exist in at least one claim, if exist in both claims, they should be equal
         if (
@@ -68,11 +73,14 @@ export const setTenantIdMiddleware: (
             throw new UnauthorizedError('Unauthorized');
         }
         const tenantId = tenantIdFromCustomClaim || tenantIdFromAudClaim;
-
+        console.log('found dis tenant', tenantId);
+        console.log('checking against', req.params.tenantIdFromPath);
+        console.log('da regex', tenantIdRegex);
         if (
             !tenantIdRegex.test(tenantId) ||
             (req.params.tenantIdFromPath !== undefined && req.params.tenantIdFromPath !== tenantId)
         ) {
+            console.log('eureka');
             throw new UnauthorizedError('Unauthorized');
         }
         res.locals.tenantId = tenantId;
